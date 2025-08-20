@@ -1,0 +1,42 @@
+services:
+  - type: web
+    name: issue-tracker-backend
+    env: node
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 3001
+      - key: DB_HOST
+        fromDatabase:
+          name: issue-tracker-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: issue-tracker-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: issue-tracker-db
+          property: database
+      - key: DB_USER
+        fromDatabase:
+          name: issue-tracker-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: issue-tracker-db
+          property: password
+      - key: JWT_SECRET
+        generateValue: true
+      - key: FRONTEND_URL
+        value: https://your-app-name.vercel.app
+
+databases:
+  - name: issue-tracker-db
+    databaseName: issue_tracker_production
+    user: issue_tracker
+    plan: free
