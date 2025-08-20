@@ -35,9 +35,6 @@
 .env.test.local
 .env.production.local
 
-# Ignore database config with credentials
-/config/database.yml
-
 # Node modules (if any frontend tools are used)
 node_modules/
 
