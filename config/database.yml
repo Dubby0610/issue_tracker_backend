@@ -18,7 +18,8 @@ test:
   password: password
 
 production:
-  <<: *default
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
   url: <%= ENV['DATABASE_URL'] %>
-  # Remove any host, username, password, or database settings
   # Let the DATABASE_URL handle everything

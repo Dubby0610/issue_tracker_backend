@@ -56,10 +56,22 @@ module IssueTrackerBackend
     config.after_initialize do
       Rails.logger.info "🎉 Rails Application Started!"
       
+      # Log environment variables for debugging
+      Rails.logger.info "🔍 Environment Variables:"
+      Rails.logger.info "  RAILS_ENV: #{ENV['RAILS_ENV']}"
+      Rails.logger.info "  DATABASE_URL: #{ENV['DATABASE_URL']&.gsub(/\/\/.*@/, '//***@') || 'NOT SET'}"
+      Rails.logger.info "  RAILS_MAX_THREADS: #{ENV['RAILS_MAX_THREADS']}"
+      
       # Delay database check to allow connection to establish
       Thread.new do
         sleep 2 # Wait 2 seconds for database connection
         begin
+          # Check database configuration
+          Rails.logger.info "🔍 Checking database configuration..."
+          Rails.logger.info "  Current adapter: #{ActiveRecord::Base.connection_config[:adapter]}"
+          Rails.logger.info "  Current host: #{ActiveRecord::Base.connection_config[:host]}"
+          Rails.logger.info "  Current database: #{ActiveRecord::Base.connection_config[:database]}"
+          
           ActiveRecord::Base.connection.execute("SELECT 1")
           tables = ActiveRecord::Base.connection.tables
           Rails.logger.info "✅ Database Connection Established"
@@ -81,6 +93,7 @@ module IssueTrackerBackend
         rescue => e
           Rails.logger.error "❌ Database Error: #{e.message}"
           Rails.logger.error "🔍 Check your DATABASE_URL environment variable"
+          Rails.logger.error "🔍 Current connection config: #{ActiveRecord::Base.connection_config.inspect}"
         end
       end
     end
