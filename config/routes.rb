@@ -2,6 +2,9 @@ Rails.application.routes.draw do
   # Health check endpoint
   get "health", to: "application#health"
   
+  # Database info endpoint
+  get "db-info", to: "application#db_info"
+  
   # API routes
   resources :projects do
     resources :issues do

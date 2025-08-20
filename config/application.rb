@@ -51,5 +51,34 @@ module IssueTrackerBackend
           credentials: true
       end
     end
+
+    # Add database logging on startup
+    config.after_initialize do
+      Rails.logger.info "🎉 Rails Application Started!"
+      
+      begin
+        ActiveRecord::Base.connection.execute("SELECT 1")
+        tables = ActiveRecord::Base.connection.tables
+        Rails.logger.info "✅ Database Connection Established"
+        Rails.logger.info "📋 Database Tables: #{tables.join(', ')}"
+        Rails.logger.info "🔢 Total Tables: #{tables.count}"
+        
+        # Log table details with record counts
+        tables.each do |table|
+          begin
+            count = ActiveRecord::Base.connection.execute("SELECT COUNT(*) FROM #{table}").first['count']
+            Rails.logger.info "  📊 #{table}: #{count} records"
+          rescue => e
+            Rails.logger.info "  ❌ #{table}: Error counting records - #{e.message}"
+          end
+        end
+        
+        Rails.logger.info "🌐 Database URL: #{ENV['DATABASE_URL']&.gsub(/\/\/.*@/, '//***@')}"
+        Rails.logger.info "🎯 Environment: #{Rails.env}"
+      rescue => e
+        Rails.logger.error "❌ Database Error: #{e.message}"
+        Rails.logger.error "🔍 Check your DATABASE_URL environment variable"
+      end
+    end
   end
 end
