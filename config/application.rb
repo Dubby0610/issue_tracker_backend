@@ -68,9 +68,10 @@ module IssueTrackerBackend
         begin
           # Check database configuration
           Rails.logger.info "🔍 Checking database configuration..."
-          Rails.logger.info "  Current adapter: #{ActiveRecord::Base.connection_config[:adapter]}"
-          Rails.logger.info "  Current host: #{ActiveRecord::Base.connection_config[:host]}"
-          Rails.logger.info "  Current database: #{ActiveRecord::Base.connection_config[:database]}"
+          db_config = ActiveRecord::Base.connection_db_config.configuration_hash
+          Rails.logger.info "  Current adapter: #{db_config[:adapter]}"
+          Rails.logger.info "  Current host: #{db_config[:host]}"
+          Rails.logger.info "  Current database: #{db_config[:database]}"
           
           ActiveRecord::Base.connection.execute("SELECT 1")
           tables = ActiveRecord::Base.connection.tables
@@ -93,7 +94,7 @@ module IssueTrackerBackend
         rescue => e
           Rails.logger.error "❌ Database Error: #{e.message}"
           Rails.logger.error "🔍 Check your DATABASE_URL environment variable"
-          Rails.logger.error "🔍 Current connection config: #{ActiveRecord::Base.connection_config.inspect}"
+          Rails.logger.error "🔍 Current connection config: #{ActiveRecord::Base.connection_db_config.configuration_hash.inspect}"
         end
       end
     end
