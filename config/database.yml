@@ -6,11 +6,19 @@ default: &default
 development:
   <<: *default
   database: issue_tracker_development
+  host: localhost
+  username: postgres
+  password: password
 
 test:
   <<: *default
   database: issue_tracker_test
+  host: localhost
+  username: postgres
+  password: password
 
 production:
   <<: *default
   url: <%= ENV['DATABASE_URL'] %>
+  # Remove any host, username, password, or database settings
+  # Let the DATABASE_URL handle everything
